@@ -5,30 +5,30 @@ from typing import Any, List
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
+from sklearn.cluster import KMeans
 from tqdm import tqdm
 
 
 def get_clusters_for_video(video: Path) -> Any:
-    # TODO: Allow skipping frames
-
-    process_frame_rate = 300
+    process_frame_rate = 2000
 
     features = []
     subframes = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
-        for index, frame in tqdm(enumerate(reader), total=reader.count_frames()):
+        total_frames = reader.count_frames()
+
+        # for index, frame in tqdm(enumerate(reader), total=reader.count_frames()):
+        for index in tqdm(range(0, total_frames, process_frame_rate)):
+            frame = reader.get_data(index)
 
             if index % process_frame_rate == 0:
                 current_subframes = extract_subframes_from_frame(frame, index)
                 subframes.extend(current_subframes)
                 current_features = extract_features_from_subframes(current_subframes)
-                features.append(current_features)
+                features.extend(current_features)
 
-    pass
-    # TODO:
-    # clusters = cluster_features(features)
-
-    # analyze_clusters(clusters)
+    clusters = cluster_features(features)
+    # visualize_clusters(clusters)
 
 
 def extract_subframes_from_frame(
@@ -106,6 +106,10 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
 def extract_edge_features():
     raise NotImplementedError
 
+def cluster_features(features: List[np.ndarray]) -> KMeans:
+    kmeans = KMeans(n_clusters=20, random_state=0)
+    kmeans.fit(features)
+    return kmeans
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
