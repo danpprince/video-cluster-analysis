@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,25 +11,29 @@ from tqdm import tqdm
 def get_clusters_for_video(video: Path) -> Any:
     # TODO: Allow skipping frames
 
-    process_frame_rate = 30
+    process_frame_rate = 300
 
     features = []
+    subframes = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
         for index, frame in tqdm(enumerate(reader), total=reader.count_frames()):
 
             if index % process_frame_rate == 0:
-                frame_features = extract_features_from_frame(frame, index)
-                features.append(frame_features)
+                current_subframes = extract_subframes_from_frame(frame, index)
+                subframes.extend(current_subframes)
+                current_features = extract_features_from_subframes(current_subframes)
+                features.append(current_features)
 
+    pass
     # TODO:
     # clusters = cluster_features(features)
 
     # analyze_clusters(clusters)
 
 
-def extract_features_from_frame(
+def extract_subframes_from_frame(
     frame: np.ndarray, frame_index: int, write_subframes: bool = True
-) -> np.ndarray:
+) -> List[np.ndarray]:
     subframe_size_px = 80
 
     num_rows = frame.shape[0] // subframe_size_px
@@ -38,7 +42,7 @@ def extract_features_from_frame(
     if frame.dtype != np.uint8:
         raise ValueError(f"Image frame is of unexpected type {frame.dtype}")
 
-    subframe_features = []
+    subframes = []
     for row_index in range(num_rows):
         for col_index in range(num_cols):
 
@@ -52,6 +56,7 @@ def extract_features_from_frame(
                 start_col:end_col,
                 :,
             ]
+            subframes.append(subframe_img)
 
             # SubFrame(
             #     frame_index=frame_index,
@@ -68,11 +73,15 @@ def extract_features_from_frame(
                 )
                 imageio.imwrite(output_path, subframe_img)
 
-            subframe_features = extract_color_features(subframe_img)
-            pass
+    return subframes
 
-            # TODO:
-            # features.append(Feature(start_row=start_row, ))
+
+
+def extract_features_from_subframes(
+    subframes: List[np.ndarray]
+) -> List[np.ndarray]:
+    subframe_features = [extract_color_features(f) for f in subframes]
+    return subframe_features
 
 
 def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.ndarray:
