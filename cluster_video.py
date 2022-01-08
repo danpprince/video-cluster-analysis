@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 
 OUTPUT_DIR = Path("output")
+NUM_CLUSTERS = 20
 
 
 def get_clusters_for_video(video: Path) -> Any:
@@ -107,7 +108,7 @@ def extract_edge_features():
 
 
 def cluster_features(features: List[np.ndarray]) -> KMeans:
-    kmeans = KMeans(n_clusters=10, random_state=0)
+    kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=0)
     kmeans.fit(features)
     return kmeans
 
@@ -117,9 +118,11 @@ def visualize_clusters(
 ) -> None:
 
     now_timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    now_timestamp_dir = OUTPUT_DIR / now_timestamp
 
+    centroid_subframes = []
     for cluster_index in range(clusters.n_clusters):
-        cluster_dir = OUTPUT_DIR / now_timestamp / f"cluster-{cluster_index :03d}"
+        cluster_dir = now_timestamp_dir / f"cluster-{cluster_index :03d}"
         cluster_dir.mkdir(parents=True, exist_ok=True)
 
         # Find representative subframe
@@ -128,9 +131,22 @@ def visualize_clusters(
         distances = np.mean((feature_centroid - np.array(features)) ** 2, axis=1)
         centroid_subframe_index = np.argmin(distances)
         centroid_subframe = subframes[centroid_subframe_index]
+        centroid_subframes.append(centroid_subframe)
 
         centroid_subframe_path = cluster_dir / "centroid_subframe.png"
         imageio.imwrite(centroid_subframe_path, centroid_subframe)
+
+    plt.figure(figsize=(10, 8))
+    num_rows = 4
+    num_cols = NUM_CLUSTERS // num_rows
+    for cluster_index, centroid_subframe in enumerate(centroid_subframes):
+        plt.subplot(num_rows, num_cols, cluster_index + 1)
+        plt.imshow(centroid_subframe)
+        plt.xticks([])
+        plt.yticks([])
+        plt.title(f"Cluster {cluster_index}")
+    plt.tight_layout()
+    plt.savefig(now_timestamp_dir / "clusters.png")
 
     for subframe_index, cluster_index in enumerate(clusters.labels_):
         subframe_img = subframes[subframe_index]
