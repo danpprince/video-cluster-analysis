@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 OUTPUT_DIR = Path("output")
-NUM_CLUSTERS = 20
+NUM_CLUSTERS = 40
 
 
 def get_clusters_for_video(video: Path) -> Any:
@@ -137,14 +137,16 @@ def visualize_clusters(
         imageio.imwrite(centroid_subframe_path, centroid_subframe)
 
     plt.figure(figsize=(10, 8))
-    num_rows = 4
+    num_rows = 5
     num_cols = NUM_CLUSTERS // num_rows
     for cluster_index, centroid_subframe in enumerate(centroid_subframes):
+        num_subframes_in_cluster = np.sum(clusters.labels_ == cluster_index)
+
         plt.subplot(num_rows, num_cols, cluster_index + 1)
         plt.imshow(centroid_subframe)
         plt.xticks([])
         plt.yticks([])
-        plt.title(f"Cluster {cluster_index}")
+        plt.title(f"Cluster {cluster_index}\n{num_subframes_in_cluster} subframes", fontsize="small")
     plt.tight_layout()
     plt.savefig(now_timestamp_dir / "clusters.png")
 
