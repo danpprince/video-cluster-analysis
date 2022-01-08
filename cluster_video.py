@@ -11,12 +11,15 @@ from tqdm import tqdm
 def get_clusters_for_video(video: Path) -> Any:
     # TODO: Allow skipping frames
 
+    process_frame_rate = 30
+
     features = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
         for index, frame in tqdm(enumerate(reader), total=reader.count_frames()):
 
-            frame_features = extract_features_from_frame(frame, index)
-            features.append(frame_features)
+            if index % process_frame_rate == 0:
+                frame_features = extract_features_from_frame(frame, index)
+                features.append(frame_features)
 
     # TODO:
     # clusters = cluster_features(features)
