@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 from pathlib import Path
 from typing import Any, List
 
@@ -9,15 +10,16 @@ from sklearn.cluster import KMeans
 from tqdm import tqdm
 
 
+OUTPUT_DIR = Path("output")
+
+
 def get_clusters_for_video(video: Path) -> Any:
-    process_frame_rate = 2000
+    process_frame_rate = 200
 
     features = []
     subframes = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
         total_frames = reader.count_frames()
-
-        # for index, frame in tqdm(enumerate(reader), total=reader.count_frames()):
         for index in tqdm(range(0, total_frames, process_frame_rate)):
             frame = reader.get_data(index)
 
@@ -28,11 +30,11 @@ def get_clusters_for_video(video: Path) -> Any:
                 features.extend(current_features)
 
     clusters = cluster_features(features)
-    # visualize_clusters(clusters)
+    visualize_clusters(clusters, subframes, features)
 
 
 def extract_subframes_from_frame(
-    frame: np.ndarray, frame_index: int, write_subframes: bool = True
+    frame: np.ndarray, frame_index: int, write_subframes: bool = False
 ) -> List[np.ndarray]:
     subframe_size_px = 80
 
@@ -76,10 +78,7 @@ def extract_subframes_from_frame(
     return subframes
 
 
-
-def extract_features_from_subframes(
-    subframes: List[np.ndarray]
-) -> List[np.ndarray]:
+def extract_features_from_subframes(subframes: List[np.ndarray]) -> List[np.ndarray]:
     subframe_features = [extract_color_features(f) for f in subframes]
     return subframe_features
 
@@ -106,10 +105,39 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
 def extract_edge_features():
     raise NotImplementedError
 
+
 def cluster_features(features: List[np.ndarray]) -> KMeans:
-    kmeans = KMeans(n_clusters=20, random_state=0)
+    kmeans = KMeans(n_clusters=10, random_state=0)
     kmeans.fit(features)
     return kmeans
+
+
+def visualize_clusters(
+    clusters: KMeans, subframes: List[np.ndarray], features: List[np.ndarray]
+) -> None:
+
+    now_timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+
+    for cluster_index in range(clusters.n_clusters):
+        cluster_dir = OUTPUT_DIR / now_timestamp / f"cluster-{cluster_index :03d}"
+        cluster_dir.mkdir(parents=True, exist_ok=True)
+
+        # Find representative subframe
+        feature_centroid = clusters.cluster_centers_[cluster_index]
+
+        distances = np.mean((feature_centroid - np.array(features)) ** 2, axis=1)
+        centroid_subframe_index = np.argmin(distances)
+        centroid_subframe = subframes[centroid_subframe_index]
+
+        centroid_subframe_path = cluster_dir / "centroid_subframe.png"
+        imageio.imwrite(centroid_subframe_path, centroid_subframe)
+
+    for subframe_index, cluster_index in enumerate(clusters.labels_):
+        subframe_img = subframes[subframe_index]
+
+        cluster_dir = OUTPUT_DIR / now_timestamp / f"cluster-{cluster_index :03d}"
+        imageio.imwrite(cluster_dir / f"subframe-{subframe_index :06d}.png", subframe_img)
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
