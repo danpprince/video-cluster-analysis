@@ -1,0 +1,6 @@
+imageio[ffmpeg]
+matplotlib
+numpy
+pandas
+pytube
+tqdm
