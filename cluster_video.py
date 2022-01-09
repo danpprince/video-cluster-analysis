@@ -1,7 +1,7 @@
 import argparse
 from datetime import datetime
 from pathlib import Path
-from typing import Any, List
+from typing import Any, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -35,8 +35,8 @@ def get_clusters_for_video(video: Path) -> Any:
                 current_features = extract_features_from_subframes(current_subframes)
                 features.extend(current_features)
 
-    clusters = cluster_features(features)
-    visualize_clusters(clusters, subframes, features)
+    clusters, standardized_features = cluster_features(features)
+    visualize_clusters(clusters, subframes, standardized_features)
 
 
 def extract_subframes_from_frame(
@@ -112,7 +112,7 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
 
 def extract_edge_features(img: np.ndarray, num_bins: int = 4) -> np.ndarray:
     hist_min_value = 0.0
-    hist_max_value = 0.6
+    hist_max_value = 0.75
     bin_edges = np.linspace(hist_min_value, hist_max_value, num_bins + 1)
     num_pixels_in_img = np.prod(img.shape[:2])
 
@@ -131,15 +131,17 @@ def extract_edge_features(img: np.ndarray, num_bins: int = 4) -> np.ndarray:
     return edge_hist
 
 
-def cluster_features(features: List[np.ndarray]) -> KMeans:
+def cluster_features(features: List[np.ndarray]) -> Tuple[KMeans, np.ndarray]:
     scaler = StandardScaler()
     kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=0)
-    kmeans.fit(scaler.fit_transform(features))
-    return kmeans
+
+    standardized_features = scaler.fit_transform(features)
+    kmeans.fit(standardized_features)
+    return kmeans, standardized_features
 
 
 def visualize_clusters(
-    clusters: KMeans, subframes: List[np.ndarray], features: List[np.ndarray]
+    clusters: KMeans, subframes: List[np.ndarray], features: np.ndarray
 ) -> None:
 
     now_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -153,7 +155,7 @@ def visualize_clusters(
         # Find representative subframe
         feature_centroid = clusters.cluster_centers_[cluster_index]
 
-        distances = np.mean((feature_centroid - np.array(features)) ** 2, axis=1)
+        distances = np.mean((feature_centroid - features) ** 2, axis=1)
         centroid_subframe_index = np.argmin(distances)
         centroid_subframe = subframes[centroid_subframe_index]
         centroid_subframes.append(centroid_subframe)
