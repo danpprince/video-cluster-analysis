@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 from skimage.color import rgb2gray
-from skimage.feature import hog
+from skimage.filters import sobel
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
@@ -96,7 +96,6 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
     hist_min_value = np.iinfo(img.dtype).min
     hist_max_value = np.iinfo(img.dtype).max
     bin_edges = np.linspace(hist_min_value, hist_max_value, bins_per_channel + 1)
-
     num_pixels_in_img = np.prod(img.shape[:2])
 
     features = []
@@ -111,14 +110,25 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
     return np.concatenate(features)
 
 
-def extract_edge_features(img: np.ndarray) -> np.ndarray:
+def extract_edge_features(img: np.ndarray, num_bins: int = 4) -> np.ndarray:
+    hist_min_value = 0.0
+    hist_max_value = 0.6
+    bin_edges = np.linspace(hist_min_value, hist_max_value, num_bins + 1)
+    num_pixels_in_img = np.prod(img.shape[:2])
+
     img_gray = rgb2gray(img)
 
-    # Calculate HOG features with one block and one cell
-    hog_features = hog(
-        img_gray, pixels_per_cell=img.shape[:2], cells_per_block=(1, 1)
-    )
-    return hog_features
+    edge_magnitude = sobel(img_gray)
+    max_magnitude = np.max(edge_magnitude)
+    if max_magnitude > hist_max_value:
+        print(f"Edge magnitude of {max_magnitude} found, greater than hist max")
+
+    edge_hist, _ = np.histogram(edge_magnitude, bin_edges)
+
+    # Normalize the feature histogram to [0.0, 1.0]
+    edge_hist = edge_hist / num_pixels_in_img
+
+    return edge_hist
 
 
 def cluster_features(features: List[np.ndarray]) -> KMeans:
