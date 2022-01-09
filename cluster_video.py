@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 from sklearn.cluster import KMeans
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
 
@@ -21,7 +23,9 @@ def get_clusters_for_video(video: Path) -> Any:
     subframes = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
         total_frames = reader.count_frames()
-        for index in tqdm(range(0, total_frames, process_frame_rate)):
+        for index in tqdm(
+            range(0, total_frames, process_frame_rate), desc="Extracting subframes"
+        ):
             frame = reader.get_data(index)
 
             if index % process_frame_rate == 0:
@@ -108,8 +112,9 @@ def extract_edge_features():
 
 
 def cluster_features(features: List[np.ndarray]) -> KMeans:
+    scaler = StandardScaler()
     kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=0)
-    kmeans.fit(features)
+    kmeans.fit(scaler.fit_transform(features))
     return kmeans
 
 
@@ -117,7 +122,7 @@ def visualize_clusters(
     clusters: KMeans, subframes: List[np.ndarray], features: List[np.ndarray]
 ) -> None:
 
-    now_timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+    now_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     now_timestamp_dir = OUTPUT_DIR / now_timestamp
 
     centroid_subframes = []
@@ -146,7 +151,10 @@ def visualize_clusters(
         plt.imshow(centroid_subframe)
         plt.xticks([])
         plt.yticks([])
-        plt.title(f"Cluster {cluster_index}\n{num_subframes_in_cluster} subframes", fontsize="small")
+        plt.title(
+            f"Cluster {cluster_index}\n{num_subframes_in_cluster} subframes",
+            fontsize="small",
+        )
     plt.tight_layout()
     plt.savefig(now_timestamp_dir / "clusters.png")
 
@@ -154,7 +162,9 @@ def visualize_clusters(
         subframe_img = subframes[subframe_index]
 
         cluster_dir = OUTPUT_DIR / now_timestamp / f"cluster-{cluster_index :03d}"
-        imageio.imwrite(cluster_dir / f"subframe-{subframe_index :06d}.png", subframe_img)
+        imageio.imwrite(
+            cluster_dir / f"subframe-{subframe_index :06d}.png", subframe_img
+        )
 
 
 def parse_args() -> argparse.Namespace:
