@@ -6,8 +6,9 @@ from typing import Any, List
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
+from skimage.color import rgb2gray
+from skimage.feature import hog
 from sklearn.cluster import KMeans
-from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 
@@ -84,7 +85,10 @@ def extract_subframes_from_frame(
 
 
 def extract_features_from_subframes(subframes: List[np.ndarray]) -> List[np.ndarray]:
-    subframe_features = [extract_color_features(f) for f in subframes]
+    subframe_features = [
+        np.concatenate((extract_color_features(f), extract_edge_features(f)))
+        for f in subframes
+    ]
     return subframe_features
 
 
@@ -107,8 +111,14 @@ def extract_color_features(img: np.ndarray, bins_per_channel: int = 4) -> np.nda
     return np.concatenate(features)
 
 
-def extract_edge_features():
-    raise NotImplementedError
+def extract_edge_features(img: np.ndarray) -> np.ndarray:
+    img_gray = rgb2gray(img)
+
+    # Calculate HOG features with one block and one cell
+    hog_features = hog(
+        img_gray, pixels_per_cell=img.shape[:2], cells_per_block=(1, 1)
+    )
+    return hog_features
 
 
 def cluster_features(features: List[np.ndarray]) -> KMeans:

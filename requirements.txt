@@ -3,5 +3,6 @@ matplotlib
 numpy
 pandas
 pytube
+scikit-image
 scikit-learn
 tqdm
