@@ -33,7 +33,7 @@ class SubFrame:
 
 
 def get_clusters_for_video(video: Path) -> Any:
-    process_frame_rate = 200
+    process_frame_rate = 40
 
     subframes = []
     with imageio.get_reader(video, format="FFMPEG") as reader:
@@ -59,7 +59,7 @@ def extract_subframes_from_frame(
     frame_index: int,
     frame_rate: float,
     write_subframes: bool = False,
-) -> List[np.ndarray]:
+) -> List[SubFrame]:
     subframe_size_px = 80
 
     num_rows = frame.shape[0] // subframe_size_px
@@ -149,7 +149,7 @@ def cluster_subframes(subframes: List[SubFrame]) -> Tuple[KMeans, np.ndarray]:
     scaler = StandardScaler()
     kmeans = KMeans(n_clusters=NUM_CLUSTERS, random_state=0)
 
-    features = np.stack([sf.features for sf in subframes])
+    features = np.stack([sf.features for sf in subframes if sf.features is not None])
 
     standardized_features = scaler.fit_transform(features)
     kmeans.fit(standardized_features)
