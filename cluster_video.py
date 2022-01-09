@@ -168,8 +168,8 @@ def visualize_clusters(
     now_timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     now_timestamp_dir = OUTPUT_DIR / now_timestamp
 
-    plt.figure(figsize=(10, 8))
     for cluster_index in range(clusters.n_clusters):
+        plt.figure(figsize=(10, 8))
         cluster_dir = now_timestamp_dir / f"cluster-{cluster_index :03d}"
         cluster_dir.mkdir(parents=True, exist_ok=True)
 
@@ -182,9 +182,13 @@ def visualize_clusters(
         tick_labels = [f"{t // 60 :0.0f}:{t % 60 :02.0f}" for t in ticks]
         plt.xticks(ticks, tick_labels)
 
+        plt.xlabel("Timestamp (minute:second)")
+        plt.ylabel("Number of subframes")
+
         plt.title(f"Time distribution of cluster {cluster_index}")
         plt.tight_layout()
         plt.savefig(cluster_dir / "time-distribution.png")
+        plt.close()
 
     centroid_imgs = []
     for cluster_index in range(clusters.n_clusters):
