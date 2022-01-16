@@ -55,7 +55,12 @@ The standardized features are then clustered using
 objects in relatively complex source video, a setting of several hundred clusters may be appropriate.
 
 ## Results
-TODO
+The following figures show the subframes closest to the centroid of the 400 clusters created from the video:
+
+![](results/2022-01-16_15-05-25/00-clusters.png)
+![](results/2022-01-16_15-05-25/01-clusters.png)
+![](results/2022-01-16_15-05-25/02-clusters.png)
+![](results/2022-01-16_15-05-25/03-clusters.png)
 
 ### Discussion
 Difficult problem due to a range of both illumination conditions and viewing angles
