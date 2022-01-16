@@ -62,6 +62,15 @@ The following figures show the subframes closest to the centroid of the 400 clus
 ![](results/2022-01-16_15-05-25/02-clusters.png)
 ![](results/2022-01-16_15-05-25/03-clusters.png)
 
+### Cluster-034, grassy area
+The centroid subframe for cluster 34 is the following:
+![](results/2022-01-16_15-05-25/cluster-034/centroid_subframe.png)
+
+This cluster contains mainly grassy areas and trees. The peaks in the time distribution for the cluster shown
+below correspond to timestamps of resdidential areas as well as Point State Park downtown in the source video.
+
+![](results/2022-01-16_15-05-25/cluster-034/time-distribution.png)
+
 ### Discussion
 Difficult problem due to a range of both illumination conditions and viewing angles
 
