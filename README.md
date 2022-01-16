@@ -14,5 +14,18 @@ video feed. By dividing each frame into smaller subimages and extracting relativ
 features, trends and outliers can be detected in an automated and quantitative way to aid manual analysis
 of the source video.
 
-## Demonstration
+## Experiment
+
+![Experiment diagram](diagram.svg)
+
+
+### Setup
+Python 3.9.7 was used for this experiment. The dependencies for the project can be installed with `make install`,
+preferably inside a virtual environment.
+
+## Results
 TODO
+
+### Discussion
+Difficult problem due to a range of both illumination conditions and viewing angles
+
