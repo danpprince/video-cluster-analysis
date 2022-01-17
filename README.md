@@ -68,8 +68,11 @@ The centroid subframe for cluster 34 is the following:
 
 ![](results/2022-01-16_15-05-25/cluster-034/centroid_subframe.png)
 
-This cluster contains mainly grassy areas and trees. The peaks in the time distribution for the cluster shown
-below correspond to timestamps of resdidential areas as well as Point State Park downtown in the source video.
+This cluster contains mainly grassy areas and trees. The example subframes shown below contain many grassy
+green areas, as well as earthy areas. The peaks in the time distribution for the cluster shown below 
+correspond to timestamps of resdidential areas as well as Point State Park downtown in the source video.
+
+![](results/2022-01-16_15-05-25/cluster-034/example-subframes.png)
 
 ![](results/2022-01-16_15-05-25/cluster-034/time-distribution.png)
 
@@ -79,9 +82,24 @@ The centroid subframe for cluster 243 is the following:
 ![](results/2022-01-16_15-05-25/cluster-243/centroid_subframe.png)
 
 This cluster contains mainly a particular view of one of the city's famous yellow bridges. It also contains
-a few subframes from other yellow objects, such as the sky at sunset and a bright yellow car.
+a few subframes from other yellow objects, such as the sky at sunset and a bright yellow car, which can
+be seen in the example subframes shown below.
+
+![](results/2022-01-16_15-05-25/cluster-243/example-subframes.png)
 
 ![](results/2022-01-16_15-05-25/cluster-243/time-distribution.png)
+
+### Cluster-002, winter snow
+The centroid subframe for cluster 002 is the following (almost entirely white):
+
+![](results/2022-01-16_15-05-25/cluster-002/centroid_subframe.png)
+
+This cluster contains subframes primarily of snowy winter scenes that occur between 12:30 and 13:30 of the
+source video, as well as some clouds and other bright white areas from other parts of the video.
+
+![](results/2022-01-16_15-05-25/cluster-002/example-subframes.png)
+
+![](results/2022-01-16_15-05-25/cluster-002/time-distribution.png)
 
 ### Discussion
 Difficult problem due to a range of both illumination conditions and viewing angles
