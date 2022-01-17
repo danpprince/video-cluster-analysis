@@ -125,7 +125,9 @@ cluster bandwidth parameter instead of a set number of clusters.
 Identifying a more specific application for this approach would be an important next step for this work.
 Focusing requirements on what kinds of objects should be clustered together would help with evaluating
 the results of the algorithm, as well as inform other features that may be more effective at extracting
-useful similarities between subframes.
+useful similarities between subframes. For example, Histogram of Oriented Gradients may be an effective
+and illimunation-invariant feature for recognizing objects if they are shown at consistent sizes and
+viewing angles.
 
 Organizing source videos to contain more consistent illumination, scenes, and view angles would also likely
 make the clusters more consistent. In the source video selected here, these variations result in both a huge
@@ -135,3 +137,6 @@ Allowing a user to query for subframes that match another subframe of interest m
 The distance between the query features and all other subframes could be evaluated and sorted to provide the
 most effective matches in descending order. This approach could provide a way to search for an object of
 interest from prior data or the current data set without a trained model.
+
+Developing unit tests and integrating with Github Actions would also improve the quality and consistency of
+the project by automatically ensuring the correctness of prior code the style of future code.
