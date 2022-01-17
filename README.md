@@ -101,10 +101,21 @@ source video, as well as some clouds and other bright white areas from other par
 
 ![](results/2022-01-16_15-05-25/cluster-002/time-distribution.png)
 
-### Discussion
-Difficult problem due to a range of both illumination conditions and viewing angles
+### Summary
+The results above indicate that several classes of objects or scenery were effectively detected, some of
+which are concentrated at a certain range of time, and others which are distributed across many scenes
+in the video. The figures containing the centroid subframes may be used to explore other visual trends
+in the source video to investigate other classes that may be expected or surprising.
+
+Due to a lack of ground truth for objects in the source video, an evaluation of the accuracy of clustering
+is difficult to quanitfy.
 
 ### Limitations
+The color features selected are sensitive to changes in illumination. For example, one cluster may contain
+subframes with similar colors that correspond to the sky at sunset, a brightly colored object in daylight,
+as well as artificial lighting at night. If a result that is more illumination-invariant is desired,
+using features such as edge strength or direction could be more effective.
+
 A K-nearest neighbors approach requires specifying a number of clusters. For unknown source material, an
 effective number may be difficult to identify. A clustering algorithm such as
 [mean shift](https://en.wikipedia.org/wiki/Mean_shift) may be more appropriate, which requires a 
