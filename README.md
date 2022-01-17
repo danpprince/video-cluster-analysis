@@ -120,3 +120,18 @@ A K-nearest neighbors approach requires specifying a number of clusters. For unk
 effective number may be difficult to identify. A clustering algorithm such as
 [mean shift](https://en.wikipedia.org/wiki/Mean_shift) may be more appropriate, which requires a 
 cluster bandwidth parameter instead of a set number of clusters.
+
+## Future work
+Identifying a more specific application for this approach would be an important next step for this work.
+Focusing requirements on what kinds of objects should be clustered together would help with evaluating
+the results of the algorithm, as well as inform other features that may be more effective at extracting
+useful similarities between subframes.
+
+Organizing source videos to contain more consistent illumination, scenes, and view angles would also likely
+make the clusters more consistent. In the source video selected here, these variations result in both a huge
+number of object classes, but also multiple visual appearances for the same class of object.
+
+Allowing a user to query for subframes that match another subframe of interest may also be a useful workflow.
+The distance between the query features and all other subframes could be evaluated and sorted to provide the
+most effective matches in descending order. This approach could provide a way to search for an object of
+interest from prior data or the current data set without a trained model.
