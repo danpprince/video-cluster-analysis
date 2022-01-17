@@ -55,7 +55,8 @@ The standardized features are then clustered using
 objects in relatively complex source video, a setting of several hundred clusters may be appropriate.
 
 ## Results
-The following figures show the subframes closest to the centroid of the 400 clusters created from the video:
+The following figures show the subframes closest to the centroid of the 400 clusters created from the 14 minute video 
+[Pittsburgh, Pennsylvania, USA 4K Drone Footage from the YouTube channel "ALL in 4k"](https://www.youtube.com/watch?v=BGsHLFg3nqI):
 
 ![](results/2022-01-16_15-05-25/00-clusters.png)
 ![](results/2022-01-16_15-05-25/01-clusters.png)
@@ -64,12 +65,23 @@ The following figures show the subframes closest to the centroid of the 400 clus
 
 ### Cluster-034, grassy area
 The centroid subframe for cluster 34 is the following:
+
 ![](results/2022-01-16_15-05-25/cluster-034/centroid_subframe.png)
 
 This cluster contains mainly grassy areas and trees. The peaks in the time distribution for the cluster shown
 below correspond to timestamps of resdidential areas as well as Point State Park downtown in the source video.
 
 ![](results/2022-01-16_15-05-25/cluster-034/time-distribution.png)
+
+### Cluster-243, yellow bridge
+The centroid subframe for cluster 243 is the following:
+
+![](results/2022-01-16_15-05-25/cluster-243/centroid_subframe.png)
+
+This cluster contains mainly a particular view of one of the city's famous yellow bridges. It also contains
+a few subframes from other yellow objects, such as the sky at sunset and a bright yellow car.
+
+![](results/2022-01-16_15-05-25/cluster-243/time-distribution.png)
 
 ### Discussion
 Difficult problem due to a range of both illumination conditions and viewing angles
