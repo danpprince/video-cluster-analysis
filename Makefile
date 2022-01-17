@@ -4,4 +4,8 @@ check:
 
 .PHONY: format
 format:
-	black cluster_video.py
+	black *.py
+
+.PHONY: install
+install:
+	pip install -r requirements.txt -r dev-requirements.txt
